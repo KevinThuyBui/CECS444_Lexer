@@ -22,7 +22,7 @@ public class Lexer {
     private char advance() {
         char character = ' ';
         try {
-            character = (char) code.read();
+            character = (char)  code.read();
         }
         catch (Exception e) {
             //TODO Return EOF or something like it
@@ -44,7 +44,7 @@ public class Lexer {
     private void scan() {
         readCode();
         char nextChar;
-        while((nextChar = peek()) != '$') {
+        while(peek() != '\n') {
             nextChar = advance();
             currentState = transitionMap.get(new CurrentSituation(currentState, nextChar));
         }

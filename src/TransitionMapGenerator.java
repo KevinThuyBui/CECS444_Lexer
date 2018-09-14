@@ -21,7 +21,7 @@ public class TransitionMapGenerator
     
     public static HashMap<CurrentSituation, State> getTransitionMap()
     {
-        if (transitionMap == null){
+        if (transitionMap.isEmpty()){
             generateTransitionMap();
         }
         return transitionMap;
