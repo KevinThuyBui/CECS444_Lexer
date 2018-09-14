@@ -3,12 +3,11 @@ import java.util.HashMap;
 
 
 public class Lexer {
-    private HashMap<CurrentSituation,State> transitionMap;
+    private static HashMap<CurrentSituation,State> transitionMap = TransitionMapGenerator.getTransitionMap();
     private State currentState = State.START;
     private PushbackInputStream code;
 
     private Lexer() {
-        transitionMap = TransitionMapGenerator.getTransitionMap();
     }
 
 
