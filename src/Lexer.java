@@ -1,4 +1,5 @@
 import java.io.PushbackInputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 
@@ -6,6 +7,7 @@ public class Lexer {
     private static HashMap<CurrentSituation,State> transitionMap = TransitionMapGenerator.getTransitionMap();
     private State currentState = State.START;
     private PushbackInputStream code;
+    private ArrayList<Token> tokenArrayList = new ArrayList<>();
 
     private Lexer() {
     }
@@ -44,10 +46,17 @@ public class Lexer {
     private void scan() {
         readCode();
         char nextChar;
-        while(peek() != '\n') {
+        StringBuilder newTokenValueBuilder = new StringBuilder();
+        TokenFactory tokenFactory = new TokenFactory();
+        while( peek() != '\n' && peek() != ' ') {
             nextChar = advance();
             currentState = transitionMap.get(new CurrentSituation(currentState, nextChar));
+            newTokenValueBuilder.append(nextChar);
         }
+        if (currentState.isAccepting()){
+            tokenArrayList.add(tokenFactory.createToken(currentState, 1, newTokenValueBuilder.toString()));
+        }
+        System.out.println(tokenArrayList);
     }
 
 
