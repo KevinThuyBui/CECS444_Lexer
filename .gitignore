@@ -21,6 +21,6 @@
 hs_err_pid*
 
 .idea
-CECS444_Lexer.iml
+*.iml
 /out
 /build
