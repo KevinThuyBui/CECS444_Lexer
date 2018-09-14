@@ -1,3 +1,5 @@
+import Tokens.Token;
+
 /**
  * This Enum lists all the valid states the FSM can enter
  * @author Stefan Brand

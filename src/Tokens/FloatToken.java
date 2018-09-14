@@ -1,3 +1,5 @@
+package Tokens;
+
 public class FloatToken extends Token {
     private double value;
 

@@ -5,8 +5,7 @@ public class TransitionMapGenerator
     private static final char[] DIGITS = {'0','1','2','3','4','5','6','7','8','9'};
     
     private static HashMap<CurrentSituation, State> transitionMap = new HashMap<>();
-    private TransitionMapGenerator(){
-    }
+    private TransitionMapGenerator(){}
     
     private static void addIntFloatTransitions(){
         transitionMap.put(new CurrentSituation(State.START,'+'),State.PLUS);

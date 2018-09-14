@@ -1,8 +1,10 @@
+import Tokens.FloatToken;
+import Tokens.IntToken;
+import Tokens.Token;
+
 public class TokenFactory
 {
-    private Token token;
-    
-    public Token createToken(State state, int lineNumber, String tokenValue)
+    public static Token createToken(State state, int lineNumber, String tokenValue)
     {
         switch (state){
             case INT:

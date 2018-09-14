@@ -1,3 +1,5 @@
+package Tokens;
+
 public class IntToken extends Token {
     private int value;
 

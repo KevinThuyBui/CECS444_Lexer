@@ -1,3 +1,5 @@
+package Tokens;
+
 public class Token {
     private String codeString;
     private int id;
