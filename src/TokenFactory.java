@@ -30,6 +30,7 @@ public class TokenFactory
             case BRACKET2:
             case COMMA:
             case SEMI:
+            case ID:
                 return new Token(state.ordinal(), lineNumber, tokenValue);
         }
         return null;
