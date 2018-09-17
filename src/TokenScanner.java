@@ -1,17 +1,17 @@
 import Tokens.Token;
 
-import java.io.PushbackInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class TokenScanner
 {
-    private PushbackInputStream code;
+    private LexerLineNumberReader code;
     private State currentState = State.START;
     private static HashMap<CurrentSituation,State> transitionMap = TransitionMapGenerator.getTransitionMap();
     
-    public TokenScanner()
-    {
-        code = new PushbackInputStream(System.in);
+    public TokenScanner(LexerLineNumberReader code) {
+        this.code = code;
     }
     
     private char advance() {
@@ -22,38 +22,47 @@ public class TokenScanner
         catch (Exception e) {
             //TODO Return EOF or something like it
         }
-        return character;
-    }
-    
-    private char peek() {
-        char character = advance();
-        try {
-            code.unread(character);
-        }
-        catch (Exception e) {
-            //TODO handle exception
-        }
+        
         return character;
     }
     
     private String scan() {
         char nextChar;
         StringBuilder newTokenValueBuilder = new StringBuilder();
-        while( peek() != '\n' && peek() != ' ') {
+        while( code.peek() != '\n' && code.peek() != ' ') {
             nextChar = advance();
             currentState = transitionMap.get(new CurrentSituation(currentState, nextChar));
             newTokenValueBuilder.append(nextChar);
         }
         
         return newTokenValueBuilder.toString();
-//        if (currentState.isAccepting()){
-//            tokenArrayList.add(tokenFactory.createToken(currentState, 1, newTokenValueBuilder.toString()));
-//        }
-//        System.out.println(tokenArrayList);
+
     }
     
-    public Token getNextToken(){
+    private Token getNextToken(){
         String tokenValue = scan();
-        return TokenFactory.createToken(currentState, 1, tokenValue);
+        //TODO Check accepting state and handle reverting to previous accepting state.
+        Token newToken = TokenFactory.createToken(currentState, code.getLineNumber(), tokenValue);
+        currentState = State.START;
+        return newToken;
+    }
+    
+    public ArrayList<Token> getAllTokens() throws IOException
+    {
+        ArrayList<Token> allTokens = new ArrayList<>();
+        while (code.peek() != '~') {
+            allTokens.add(getNextToken());
+    
+            clearWhitespace();
+        }
+        code.close();
+        allTokens.add(new Token(0, code.getLineNumber(),""));
+        return allTokens;
+    }
+    
+    private void clearWhitespace() throws IOException
+    {
+        while (code.peek() == ' ' ||  code.peek() == '\n' )
+            advance();
     }
 }
