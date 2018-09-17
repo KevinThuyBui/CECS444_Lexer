@@ -47,6 +47,15 @@ public class TransitionMapGenerator
         transitionMap.put(new CurrentSituation(State.START, '/'), State.SLASH);
     }
     
+    private static void addCharacters(){
+        fillMapChar(State.START, State.ID);
+        transitionMap.put(new CurrentSituation(State.START, '_'), State.ID);
+        
+        fillMapChar(State.ID, State.ID);
+        fillMap(State.ID, State.ID, DIGITS);
+        transitionMap.put(new CurrentSituation(State.ID, '_'), State.ID);
+    }
+    
     public static HashMap<CurrentSituation, State> getTransitionMap()
     {
         if (transitionMap.isEmpty()){
@@ -60,11 +69,22 @@ public class TransitionMapGenerator
         addIntFloatTransitions();
         addPairedDelimiters();
         addOtherPunctuationTokens();
+        addCharacters();
     }
     
     private static void fillMap(State oldState, State newState, char[] chars) {
         for (char c : chars) {
             transitionMap.put(new CurrentSituation(oldState, c), newState);
+        }
+    }
+    
+    private static void fillMapChar(State oldState, State newState){
+        for (int i = 65; i < 91; i++){
+            transitionMap.put(new CurrentSituation(oldState, (char) i), newState);
+        }
+        
+        for (int i = 97; i < 123; i++){
+            transitionMap.put(new CurrentSituation(oldState, (char) i), newState);
         }
     }
 }

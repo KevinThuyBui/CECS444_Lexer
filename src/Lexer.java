@@ -3,11 +3,7 @@ import Tokens.Token;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PushbackInputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
-
-import static jdk.nashorn.internal.objects.Global.print;
 
 
 public class Lexer {
@@ -15,7 +11,7 @@ public class Lexer {
     private static TokenScanner tokenScanner;
     private Lexer() {}
     
-    private static TokenScanner getTokenScanner(LexerLineNumberReader code){
+    private static TokenScanner getTokenScanner(PushBackLineNumberReader code){
         if (tokenScanner == null) tokenScanner = new TokenScanner(code);
         return tokenScanner;
         
@@ -24,7 +20,7 @@ public class Lexer {
 
     public static void main(String[] args) {
         System.out.println("Please enter your code below Enter '~' to end input:");
-        LexerLineNumberReader codeInput = new LexerLineNumberReader(new BufferedReader(new InputStreamReader(System.in)));
+        PushBackLineNumberReader codeInput = new PushBackLineNumberReader(new BufferedReader(new InputStreamReader(System.in)));
         TokenScanner tokenscanner = Lexer.getTokenScanner(codeInput);
         try
         {

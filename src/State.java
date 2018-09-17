@@ -8,6 +8,7 @@ import Tokens.Token;
 public enum State {
     //TODO Move the positon of enums around so we can use State.ordinal() to get token-type number.
     //complex types
+    SPACER(false),
     COMMENT(true), ID(true), INT(true), FLOAT(true), STRING(true),
 
     //Delimiters
