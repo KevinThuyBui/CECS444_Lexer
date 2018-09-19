@@ -70,6 +70,9 @@ public class TransitionMapGenerator
         addPairedDelimiters();
         addOtherPunctuationTokens();
         addCharacters();
+        
+        transitionMap.put(new CurrentSituation(State.START, '"'), State.STRING);
+        transitionMap.put(new CurrentSituation(State.SLASH, '/'), State.COMMENT);
     }
     
     private static void fillMap(State oldState, State newState, char[] chars) {

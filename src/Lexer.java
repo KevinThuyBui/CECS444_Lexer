@@ -24,7 +24,8 @@ public class Lexer {
         TokenScanner tokenscanner = Lexer.getTokenScanner(codeInput);
         try
         {
-            System.out.println(tokenscanner.getAllTokens());
+            for (Token t : tokenscanner.getAllTokens())
+                System.out.println(t);
         } catch (IOException e)
         {
             e.printStackTrace();
