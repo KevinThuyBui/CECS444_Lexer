@@ -38,6 +38,40 @@ public class TokenScanner
             newTokenValueBuilder.append(nextChar);
     
             if (currentState == null) break;
+    
+            if (currentState == State.COMMENT) {
+                while (code.peek() != '\n') {
+                    try {
+                        code.read();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+    
+                currentState = State.START;
+                try
+                {
+                    clearWhitespace();
+                } catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+                return getNextToken();
+            }
+        
+        
+            if (currentState == State.STRING) {
+            try {
+                currentState = State.START;
+                return TokenFactory.createToken(State.STRING, code.getLineNumber(), processString());
+                
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            }
+            
+            
+           
             
             if (currentState.isAccepting()) {
     
@@ -46,24 +80,18 @@ public class TokenScanner
             }
             nextChar = code.peek();
         }
+        
         if (lastValidToken.getCodeString().length() == newTokenValueBuilder.length()) {
             currentState = State.START;
             return lastValidToken;
-        }
-        else {
-            if (lastValidToken != null)
-            {
-                newTokenValueBuilder.delete(0, lastValidToken.getCodeString().length());
-                code.unread(newTokenValueBuilder.toString());
-                
-            }
+        } else {
+            newTokenValueBuilder.delete(0, lastValidToken.getCodeString().length());
+            code.unread(newTokenValueBuilder.toString());
+    
             currentState = State.START;
             return lastValidToken;
     
         }
-        
-        
-        
     }
     
     public ArrayList<Token> getAllTokens() throws IOException
@@ -84,5 +112,18 @@ public class TokenScanner
     {
         while (code.peek() == ' ' ||  code.peek() == '\n' )
             advance();
+    }
+    
+    private String processString() throws IOException
+    {
+        StringBuilder newString = new StringBuilder();
+        while (code.peek() != '"'){
+            
+            newString.append((char)code.read());
+            
+        }
+        code.read();
+        return newString.toString();
+        
     }
 }

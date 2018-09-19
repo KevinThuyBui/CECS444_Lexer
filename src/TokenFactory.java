@@ -11,7 +11,9 @@ public class TokenFactory
                 return new IntToken(3, lineNumber, tokenValue, Integer.parseInt(tokenValue));
             case FLOAT:
                 return new FloatToken(4, lineNumber, tokenValue, Float.parseFloat(tokenValue));
-                //TODO Add cases for each unique token and a general one for the rest
+    
+            case ID:
+                //TODO Add function to check/create tokens for keywords
             case DOT:
             case MINUS:
             case ASTER:
@@ -30,7 +32,7 @@ public class TokenFactory
             case BRACKET2:
             case COMMA:
             case SEMI:
-            case ID:
+            case STRING:
                 return new Token(state.ordinal(), lineNumber, tokenValue);
         }
         return null;
