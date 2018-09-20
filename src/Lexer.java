@@ -7,7 +7,6 @@ import java.util.ArrayList;
 
 
 public class Lexer {
-    private ArrayList<Token> tokenArrayList = new ArrayList<>();
     private static TokenScanner tokenScanner;
     private Lexer() {}
     
