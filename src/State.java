@@ -24,7 +24,7 @@ public enum State {
     OPGE(true), OPSHL(true), OPSHR(true), ERROR(true), EOF(true),
 
     //Unaccepting States
-    START(false), MAYBEFLOAT(false);
+    START(false), MAYBEFLOAT(false), EXCLA(false);
 
     private boolean accepting;
     private Token token;

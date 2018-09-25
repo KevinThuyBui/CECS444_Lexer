@@ -1,6 +1,4 @@
-import Tokens.FloatToken;
-import Tokens.IntToken;
-import Tokens.Token;
+import Tokens.*;
 
 public class TokenFactory
 {
@@ -11,7 +9,8 @@ public class TokenFactory
                 return new IntToken(3, lineNumber, tokenValue, Integer.parseInt(tokenValue));
             case FLOAT:
                 return new FloatToken(4, lineNumber, tokenValue, Float.parseFloat(tokenValue));
+            default:
+                return new Token(99,lineNumber,tokenValue);
         }
-        return null;
     }
 }

@@ -1,10 +1,5 @@
 import Tokens.Token;
-
-import java.io.PushbackInputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
-
-import static jdk.nashorn.internal.objects.Global.print;
 
 
 public class Lexer {

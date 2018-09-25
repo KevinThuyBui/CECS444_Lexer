@@ -5,7 +5,7 @@ public class Token {
     private int id;
     private int lineNumber;
 
-    Token(int id, int lineNumber, String codeString) {
+    public Token(int id, int lineNumber, String codeString) {
         this.id = id;
         this.codeString = codeString;
         this.lineNumber = lineNumber;
