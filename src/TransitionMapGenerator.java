@@ -1,60 +1,83 @@
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class TransitionMapGenerator
 {
     private static final char[] DIGITS = {'0','1','2','3','4','5','6','7','8','9'};
+    private static final char[] LU = {'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q',
+            'r','s','t','u','v','w','x','y','z','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O',
+            'P','Q','R','S','T','U','V','W','X','Y','Z','_'};
+
+    private static final HashSet<String> keywords = createKeywordSet();
     
     private static HashMap<CurrentSituation, State> transitionMap = new HashMap<>();
     private TransitionMapGenerator(){}
-    
-    //TODO add the rest of the transition states
-    
+
+    private static HashSet<String> createKeywordSet() {
+        HashSet<String> keywords = new HashSet<>();
+
+        keywords.add("prog");
+        keywords.add("main");
+        keywords.add("fcn");
+
+        return keywords;
+    }
+
     private static void addIntFloatTransitions(){
-        transitionMap.put(new CurrentSituation(State.START,'+'),State.PLUS);
-        transitionMap.put(new CurrentSituation(State.START, '-'),State.MINUS);
+        fillMap(State.START,State.PLUS,'+');
+        fillMap(State.START,State.MINUS,'-');
         fillMap(State.START,State.INT,DIGITS);
         fillMap(State.PLUS,State.INT,DIGITS);
         fillMap(State.MINUS,State.INT,DIGITS);
         fillMap(State.INT,State.INT,DIGITS);
-        transitionMap.put(new CurrentSituation(State.INT,'.'),State.MAYBEFLOAT);
+        fillMap(State.INT,State.MAYBEFLOAT,'.');
         fillMap(State.MAYBEFLOAT,State.FLOAT,DIGITS);
-        fillMap(State.FLOAT, State.FLOAT, DIGITS);
     }
-    
-    private static void addPairedDelimiters(){
-        transitionMap.put(new CurrentSituation(State.START, '<'), State.ANGLE1);
-        transitionMap.put(new CurrentSituation(State.START, '>'), State.ANGLE2);
-        transitionMap.put(new CurrentSituation(State.START, '{'), State.BRACE1);
-        transitionMap.put(new CurrentSituation(State.START, '}'), State.BRACE2);
-        transitionMap.put(new CurrentSituation(State.START, '['), State.BRACKET1);
-        transitionMap.put(new CurrentSituation(State.START, ']'), State.BRACKET2);
-        transitionMap.put(new CurrentSituation(State.START, '('), State.PARENS1);
-        transitionMap.put(new CurrentSituation(State.START, ')'), State.PARENS2);
+
+    private static void addStringTransitions() {
+        fillMap(State.START,State.LU,LU);
+        fillMap(State.LU,State.STRING,LU);
+        fillMap(State.LU,State.STRING,DIGITS);
+        fillMap(State.STRING,State.STRING,LU);
+        fillMap(State.STRING,State.STRING,DIGITS);
     }
-    
-    private static void addOtherPunctuationTokens(){
-        transitionMap.put(new CurrentSituation(State.START, ';'), State.SEMI);
-        transitionMap.put(new CurrentSituation(State.START, ','), State.COMMA);
-        
-        
-        transitionMap.put(new CurrentSituation(State.START, '*'), State.ASTER);
-        transitionMap.put(new CurrentSituation(State.START, '^'), State.CARET);
-        transitionMap.put(new CurrentSituation(State.START, ':'), State.COLON);
-        transitionMap.put(new CurrentSituation(State.START, '.'), State.DOT);
-        transitionMap.put(new CurrentSituation(State.START, '='), State.EQUAL);
-        transitionMap.put(new CurrentSituation(State.START, '-'), State.MINUS);
-        transitionMap.put(new CurrentSituation(State.START, '+'), State.PLUS);
-        transitionMap.put(new CurrentSituation(State.START, '/'), State.SLASH);
+
+    private static void addDelimiterTransitions() {
+        fillMap(State.START,State.COMMA,',');
+        fillMap(State.START,State.SEMI,';');
+        fillMap(State.START,State.ANGLE1,'<');
+        fillMap(State.START,State.ANGLE2,'>');
+        fillMap(State.START,State.BRACE1,'{');
+        fillMap(State.START,State.BRACE2,'}');
+        fillMap(State.START,State.BRACKET1,'[');
+        fillMap(State.START,State.BRACKET2,']');
+        fillMap(State.START,State.PARENS1,'(');
+        fillMap(State.START,State.PARENS2,')');
     }
-    
-    private static void addCharacters(){
-        fillMapChar(State.START, State.ID);
-        transitionMap.put(new CurrentSituation(State.START, '_'), State.ID);
-        
-        fillMapChar(State.ID, State.ID);
-        fillMap(State.ID, State.ID, DIGITS);
-        transitionMap.put(new CurrentSituation(State.ID, '_'), State.ID);
+
+    private static void addPunctuationTransitions() {
+        fillMap(State.START,State.ASTER,'*');
+        fillMap(State.START,State.CARET,'^');
+        fillMap(State.START,State.COLON,':');
+        fillMap(State.START,State.DOT,'.');
+        fillMap(State.START,State.EQUAL,'=');
+        fillMap(State.START,State.MINUS,'-');
+        fillMap(State.START,State.PLUS,'+');
+        fillMap(State.START,State.SLASH,'/');
     }
+
+    private static void addMultiCharOperatorTransitions() {
+        fillMap(State.MINUS,State.OPARROW,'>');
+        fillMap(State.EQUAL,State.OPEQ,'=');
+        fillMap(State.START,State.EXCLA,'!');
+        fillMap(State.EXCLA,State.OPNE,'=');
+        fillMap(State.ANGLE1,State.OPLE,'=');
+        fillMap(State.ANGLE2,State.OPGE,'=');
+        fillMap(State.ANGLE1,State.OPSHL,'<');
+        fillMap(State.ANGLE2,State.OPSHR,'>');
+    }
+
+
     
     public static HashMap<CurrentSituation, State> getTransitionMap()
     {
@@ -67,27 +90,19 @@ public class TransitionMapGenerator
     private static void generateTransitionMap()
     {
         addIntFloatTransitions();
-        addPairedDelimiters();
-        addOtherPunctuationTokens();
-        addCharacters();
-        
-        transitionMap.put(new CurrentSituation(State.START, '"'), State.STRING);
-        transitionMap.put(new CurrentSituation(State.SLASH, '/'), State.COMMENT);
+        addStringTransitions();
+        addDelimiterTransitions();
+        addPunctuationTransitions();
+        addMultiCharOperatorTransitions();
     }
     
     private static void fillMap(State oldState, State newState, char[] chars) {
         for (char c : chars) {
-            transitionMap.put(new CurrentSituation(oldState, c), newState);
+            fillMap(oldState,newState,c);
         }
     }
-    
-    private static void fillMapChar(State oldState, State newState){
-        for (int i = 65; i < 91; i++){
-            transitionMap.put(new CurrentSituation(oldState, (char) i), newState);
-        }
-        
-        for (int i = 97; i < 123; i++){
-            transitionMap.put(new CurrentSituation(oldState, (char) i), newState);
-        }
+
+    private static void fillMap(State oldState, State newState, char c) {
+        transitionMap.put(new CurrentSituation(oldState, c), newState);
     }
 }

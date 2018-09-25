@@ -1,120 +1,77 @@
 import Tokens.Token;
 
-import java.io.IOException;
-import java.util.ArrayList;
+import java.io.PushbackInputStream;
 import java.util.HashMap;
 
-public class TokenScanner {
-    private PushBackLineNumberReader code;
+public class TokenScanner
+{
+    private static final char NEWLINE = '\n';
+    private PushbackInputStream code;
     private State currentState = State.START;
     private static HashMap<CurrentSituation,State> transitionMap = TransitionMapGenerator.getTransitionMap();
+    private int lineNumber;
     
-    public TokenScanner(PushBackLineNumberReader code) {
-        this.code = code;
+    public TokenScanner()
+    {
+        code = new PushbackInputStream(System.in);
+        lineNumber = 0;
     }
     
     private char advance() {
         char character = ' ';
         try {
-            character =  code.readChar();
+            character = (char)  code.read();
         }
         catch (Exception e) {
-            //TODO Return EOF or something like it
+            return (char) -1;
         }
-        
         return character;
     }
     
-    private Token getNextToken() throws IOException {
-        //TODO Refactor this monster
-        char nextChar = code.peek();
+    private char peek() {
+        char character = advance();
+        try {
+            code.unread(character);
+        }
+        catch (Exception e) {
+            //TODO handle exception
+        }
+        return character;
+    }
+    
+    private String scan() throws InvalidTokenException {
+        char nextChar;
         StringBuilder newTokenValueBuilder = new StringBuilder();
-        Token lastValidToken = null;
-        
-        while(nextChar != '\n' && nextChar != ' '){
+        while( peek() != NEWLINE && peek() != ' ') {
             nextChar = advance();
-            currentState = transitionMap.get(new CurrentSituation(currentState, nextChar));
-            newTokenValueBuilder.append(nextChar);
-    
-    
-            if (currentState == null) break;
-    
-    
-            if (currentState == State.COMMENT) {
-                return handleComment();
+            if (transitionMap.containsKey(new CurrentSituation(currentState, nextChar))) {
+                currentState = transitionMap.get(new CurrentSituation(currentState, nextChar));
+                newTokenValueBuilder.append(nextChar);
+            } else {
+                throw new InvalidTokenException("Transition not found");
             }
-        
-        
-            if (currentState == State.STRING) {
-                return handleString();
-            }
-            
-            if (currentState.isAccepting()) {
-    
-                lastValidToken = TokenFactory.createToken(currentState, code.getLineNumber(),
-                        newTokenValueBuilder.toString());
-            }
-            
-            nextChar = code.peek();
         }
-        
-        if (lastValidToken.getCodeString().length() == newTokenValueBuilder.length()) {
-            currentState = State.START;
-            return lastValidToken;
-        } else {
-            newTokenValueBuilder.delete(0, lastValidToken.getCodeString().length());
-            code.unread(newTokenValueBuilder.toString());
-    
-            currentState = State.START;
-            return lastValidToken;
-    
-        }
-    }
-    
-    private Token handleString() throws IOException {
-        currentState = State.START;
-        String stringTokenValue = processString();
-        return TokenFactory.createToken(State.STRING, code.getLineNumber(), stringTokenValue);
-    }
-    
-    private Token handleComment() throws IOException {
-        while (code.peek() != '\n') {
-            code.readChar();
-        }
-        
-        currentState = State.START;
-        clearWhitespace();
-        
-        return getNextToken();
-    }
-    
-    public ArrayList<Token> getAllTokens() throws IOException {
-        clearWhitespace();
-        ArrayList<Token> allTokens = new ArrayList<>();
-        while (code.peek() != '~') {
-            allTokens.add(getNextToken());
-    
-            clearWhitespace();
-        }
-        code.close();
-        allTokens.add(new Token(State.EOF.getStateID(), code.getLineNumber(),""));
-        return allTokens;
-    }
-    
-    private void clearWhitespace() throws IOException {
-        while (code.peek() == ' ' ||  code.peek() == '\n' )
+
+        if (peek() == NEWLINE) {
             advance();
+            lineNumber++;
+        }
+
+        return newTokenValueBuilder.toString();
+//        if (currentState.isAccepting()){
+//            tokenArrayList.add(tokenFactory.createToken(currentState, 1, newTokenValueBuilder.toString()));
+//        }
+//        System.out.println(tokenArrayList);
     }
     
-    private String processString() throws IOException {
-        StringBuilder newString = new StringBuilder();
-        while (code.peek() != '"'){
-            
-            newString.append(code.readChar());
-            
+    public Token getNextToken(){
+        String tokenValue = "";
+        try {
+            tokenValue = scan();
         }
-        code.readChar();
-        return newString.toString();
-        
+        catch (InvalidTokenException e) {
+            return TokenFactory.createToken(State.ERROR,lineNumber,tokenValue);
+        }
+        return TokenFactory.createToken(currentState, lineNumber, tokenValue);
     }
 }
