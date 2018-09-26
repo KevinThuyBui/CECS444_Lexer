@@ -51,11 +51,10 @@ public class TokenScanner {
         return character;
     }
     
-    /** //TODO Finish this
-     * Calls <code>parseNextToken()</code> to get a token then checks if characters need to be unread by comparing
-     * the value of the lastValidToken with the
+    /**
+     * Creates a new token using <code>parseNextToken</code> and pushes unused characters back.
      * @return The parsed Token
-     * @throws IOException Passes the exception from <code>code.peek()</code>
+     * @throws IOException Passes the exception from <code>parseNextToken</code>
      */
     
     private Token getNextToken() throws IOException {
