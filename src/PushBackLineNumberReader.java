@@ -9,7 +9,7 @@ import java.io.Reader;
  *
  * The default buffer is 20 characters long. This should suffice for our Lexer.
  *
- * @author Kevin Bui
+ * @author Kevin Bui Kevinthuybui@gmail.com
  */
 
 public class PushBackLineNumberReader extends LineNumberReader
@@ -89,7 +89,7 @@ public class PushBackLineNumberReader extends LineNumberReader
     }
     
     /**
-     * Adds the given character to buffer and updates position.
+     * Decrements position then adds the given character to buffer.
      * @param character The character to be unread.
      */
     public void unread(char character){

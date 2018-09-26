@@ -1,22 +1,61 @@
-import Tokens.*;
+import Tokens.FloatToken;
+import Tokens.IntToken;
+import Tokens.Token;
 
+/**
+ * This class handles the creation of Tokens.
+ * @author Kevin Bui Kevinthuybui@gmail.com
+ */
 public class TokenFactory
 {
+    /**
+     * Creates a token given a state, line number, and the token's value.
+     * @param state The state as given by <code>State</code>
+     * @param lineNumber The line number of the source code
+     * @param tokenValue The String value of the token
+     * @return A token as described by the state
+     */
     public static Token createToken(State state, int lineNumber, String tokenValue)
     {
         switch (state){
             case INT:
-                return new IntToken(3, lineNumber, tokenValue, Integer.parseInt(tokenValue));
+                return new IntToken(state.getStateID(), lineNumber, tokenValue, Integer.parseInt(tokenValue));
             case FLOAT:
-                return new FloatToken(4, lineNumber, tokenValue, Float.parseFloat(tokenValue));
-            case KPROG:
-                return new Token(10,lineNumber,tokenValue);
+                return new FloatToken(state.getStateID(), lineNumber, tokenValue, Float.parseFloat(tokenValue));
+                
             case ID:
-                return new Token(2,lineNumber,tokenValue);
+                //TODO Add function to check/create tokens for keywords
             case COMMENT:
-                return null;
+            case OPARROW:
+            case OPEQ:
+            case OPGE:
+            case OPLE:
+            case OPNE:
+            case OPSHL:
+            case OPSHR:
+            case DOT:
+            case MINUS:
+            case ASTER:
+            case CARET:
+            case COLON:
+            case PLUS:
+            case SLASH:
+            case EQUAL:
+            case ANGLE1:
+            case ANGLE2:
+            case BRACE1:
+            case BRACE2:
+            case PARENS1:
+            case PARENS2:
+            case BRACKET1:
+            case BRACKET2:
+            case COMMA:
+            case SEMI:
+            case STRING:
+                return new Token(state.getStateID(), lineNumber, tokenValue);
             default:
-                return new Token(99,lineNumber,tokenValue);
+                return new Token(State.ERROR.getStateID(), lineNumber, tokenValue);
         }
     }
 }
+
