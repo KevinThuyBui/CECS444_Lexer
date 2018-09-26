@@ -1,6 +1,6 @@
 public class InvalidTokenException extends Exception {
     public InvalidTokenException() {
-        //do nothing
+        super();
     }
 
     public InvalidTokenException(String errorMessage)

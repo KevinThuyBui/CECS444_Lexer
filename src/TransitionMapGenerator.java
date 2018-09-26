@@ -8,20 +8,10 @@ public class TransitionMapGenerator
             'r','s','t','u','v','w','x','y','z','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O',
             'P','Q','R','S','T','U','V','W','X','Y','Z','_'};
 
-    private static final HashSet<String> keywords = createKeywordSet();
-    
     private static HashMap<CurrentSituation, State> transitionMap = new HashMap<>();
     private TransitionMapGenerator(){}
 
-    private static HashSet<String> createKeywordSet() {
-        HashSet<String> keywords = new HashSet<>();
 
-        keywords.add("prog");
-        keywords.add("main");
-        keywords.add("fcn");
-
-        return keywords;
-    }
 
     private static void addIntFloatTransitions(){
         fillMap(State.START,State.PLUS,'+');
@@ -34,12 +24,12 @@ public class TransitionMapGenerator
         fillMap(State.MAYBEFLOAT,State.FLOAT,DIGITS);
     }
 
-    private static void addStringTransitions() {
+    private static void addIDTransitions() {
         fillMap(State.START,State.LU,LU);
-        fillMap(State.LU,State.STRING,LU);
-        fillMap(State.LU,State.STRING,DIGITS);
-        fillMap(State.STRING,State.STRING,LU);
-        fillMap(State.STRING,State.STRING,DIGITS);
+        fillMap(State.LU,State.ID,LU);
+        fillMap(State.LU,State.ID,DIGITS);
+        fillMap(State.ID,State.ID,LU);
+        fillMap(State.ID,State.ID,DIGITS);
     }
 
     private static void addDelimiterTransitions() {
@@ -75,6 +65,7 @@ public class TransitionMapGenerator
         fillMap(State.ANGLE2,State.OPGE,'=');
         fillMap(State.ANGLE1,State.OPSHL,'<');
         fillMap(State.ANGLE2,State.OPSHR,'>');
+        fillMap(State.SLASH,State.COMMENT,'/');
     }
 
 
@@ -90,7 +81,7 @@ public class TransitionMapGenerator
     private static void generateTransitionMap()
     {
         addIntFloatTransitions();
-        addStringTransitions();
+        addIDTransitions();
         addDelimiterTransitions();
         addPunctuationTransitions();
         addMultiCharOperatorTransitions();

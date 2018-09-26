@@ -17,6 +17,9 @@ public class Lexer {
 
     public static void main(String[] args) {
         TokenScanner tokenscanner = Lexer.getTokenScanner();
-        System.out.println(tokenscanner.getNextToken());
+        Token nextToken = tokenscanner.getNextToken();
+        if (nextToken != null) {
+            System.out.println(nextToken);
+        }
     }
 }

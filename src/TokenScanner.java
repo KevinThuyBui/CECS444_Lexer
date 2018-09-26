@@ -2,6 +2,7 @@ import Tokens.Token;
 
 import java.io.PushbackInputStream;
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class TokenScanner
 {
@@ -10,11 +11,22 @@ public class TokenScanner
     private State currentState = State.START;
     private static HashMap<CurrentSituation,State> transitionMap = TransitionMapGenerator.getTransitionMap();
     private int lineNumber;
+    HashMap<String,State> keywords;
+
+
+    private void createKeywordMap() {
+        keywords = new HashMap<>();
+
+        keywords.put("prog",State.KPROG);
+        keywords.put("main",State.KMAIN);
+        keywords.put("fcn",State.KFCN);
+    }
     
     public TokenScanner()
     {
         code = new PushbackInputStream(System.in);
-        lineNumber = 0;
+        lineNumber = 1;
+        createKeywordMap();
     }
     
     private char advance() {
@@ -43,18 +55,21 @@ public class TokenScanner
         char nextChar;
         StringBuilder newTokenValueBuilder = new StringBuilder();
         while( peek() != NEWLINE && peek() != ' ') {
-            nextChar = advance();
-            if (transitionMap.containsKey(new CurrentSituation(currentState, nextChar))) {
-                currentState = transitionMap.get(new CurrentSituation(currentState, nextChar));
-                newTokenValueBuilder.append(nextChar);
+            if (currentState == State.COMMENT) {
+                advance();
             } else {
-                throw new InvalidTokenException("Transition not found");
+                nextChar = advance();
+                if (transitionMap.containsKey(new CurrentSituation(currentState, nextChar))) {
+                    currentState = transitionMap.get(new CurrentSituation(currentState, nextChar));
+                    if (currentState == State.COMMENT) {
+                        newTokenValueBuilder = new StringBuilder();
+                    }else {
+                        newTokenValueBuilder.append(nextChar);
+                    }
+                } else {
+                    throw new InvalidTokenException("Transition not found");
+                }
             }
-        }
-
-        if (peek() == NEWLINE) {
-            advance();
-            lineNumber++;
         }
 
         return newTokenValueBuilder.toString();
@@ -63,15 +78,27 @@ public class TokenScanner
 //        }
 //        System.out.println(tokenArrayList);
     }
-    
+
     public Token getNextToken(){
         String tokenValue = "";
+        Token token;
         try {
             tokenValue = scan();
+            if (currentState == State.ID && keywords.containsKey(tokenValue)) {
+                currentState = keywords.get(tokenValue);
+            }
+            token = TokenFactory.createToken(currentState, lineNumber, tokenValue);
         }
         catch (InvalidTokenException e) {
-            return TokenFactory.createToken(State.ERROR,lineNumber,tokenValue);
+            token = TokenFactory.createToken(State.ERROR,lineNumber,tokenValue);
         }
-        return TokenFactory.createToken(currentState, lineNumber, tokenValue);
+        currentState = State.START;
+
+        if (peek() == NEWLINE) {
+            advance();
+            lineNumber++;
+        }
+
+        return token;
     }
 }
