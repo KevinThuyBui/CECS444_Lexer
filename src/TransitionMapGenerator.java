@@ -47,6 +47,17 @@ public class TransitionMapGenerator
         transitionMap.put(new CurrentSituation(State.START, '/'), State.SLASH);
     }
     
+    private static void addMulticharaterOperators(){
+        transitionMap.put(new CurrentSituation(State.MINUS, '>'), State.OPARROW);
+        transitionMap.put(new CurrentSituation(State.EQUAL, '='), State.OPEQ);
+        transitionMap.put(new CurrentSituation(State.START, '!'), State.MAYBEOPNE);
+        transitionMap.put(new CurrentSituation(State.MAYBEOPNE, '='), State.OPNE);
+        transitionMap.put(new CurrentSituation(State.ANGLE1, '='), State.OPLE);
+        transitionMap.put(new CurrentSituation(State.ANGLE2, '='), State.OPGE);
+        transitionMap.put(new CurrentSituation(State.ANGLE1, '<'), State.OPSHL);
+        transitionMap.put(new CurrentSituation(State.ANGLE2, '>'), State.OPSHR);
+    }
+    
     private static void addCharacters(){
         fillMapChar(State.START, State.ID);
         transitionMap.put(new CurrentSituation(State.START, '_'), State.ID);
@@ -70,7 +81,11 @@ public class TransitionMapGenerator
         addPairedDelimiters();
         addOtherPunctuationTokens();
         addCharacters();
-        
+        addMulticharaterOperators();
+        addStringComment();
+    }
+    
+    private static void addStringComment() {
         transitionMap.put(new CurrentSituation(State.START, '"'), State.STRING);
         transitionMap.put(new CurrentSituation(State.SLASH, '/'), State.COMMENT);
     }

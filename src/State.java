@@ -13,7 +13,7 @@ public enum State {
     COMMA(true, 6), SEMI(true, 7),
     
     //Unaccepting States
-    START(false, 99), MAYBEFLOAT(false, 99),
+    START(false, 99), MAYBEFLOAT(false, 99), MAYBEOPNE(false, 99),
     
     ANGLE1(true, 31), ANGLE2(true, 32), BRACE1(true, 33), BRACE2(true, 34),
     BRACKET1(true, 35), BRACKET2(true, 36), PARENS1(true, 37), PARENS2(true, 38),

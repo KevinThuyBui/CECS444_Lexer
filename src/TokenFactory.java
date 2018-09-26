@@ -4,15 +4,16 @@ import Tokens.Token;
 
 /**
  * This class handles the creation of Tokens.
+ * @author Kevin Bui Kevinthuybui@gmail.com
  */
 public class TokenFactory
 {
     /**
-     *
-     * @param state
-     * @param lineNumber
-     * @param tokenValue
-     * @return
+     * Creates a token given a state, line number, and the token's value.
+     * @param state The state as given by <code>State</code>
+     * @param lineNumber The line number of the source code
+     * @param tokenValue The String value of the token
+     * @return A token as described by the state
      */
     public static Token createToken(State state, int lineNumber, String tokenValue)
     {
@@ -21,10 +22,17 @@ public class TokenFactory
                 return new IntToken(state.getStateID(), lineNumber, tokenValue, Integer.parseInt(tokenValue));
             case FLOAT:
                 return new FloatToken(state.getStateID(), lineNumber, tokenValue, Float.parseFloat(tokenValue));
-    
+                
             case ID:
                 //TODO Add function to check/create tokens for keywords
-                
+            case COMMENT:
+            case OPARROW:
+            case OPEQ:
+            case OPGE:
+            case OPLE:
+            case OPNE:
+            case OPSHL:
+            case OPSHR:
             case DOT:
             case MINUS:
             case ASTER:
