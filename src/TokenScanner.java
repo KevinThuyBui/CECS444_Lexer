@@ -102,7 +102,7 @@ public class TokenScanner {
             } else if (currentState == State.STRING) {
                 lastValidToken =  createStringToken();
                 break;
-            } else if (currentState == State.ERROR)
+            }
         
             if (currentState.isAccepting()) {
             
@@ -112,10 +112,10 @@ public class TokenScanner {
         
             nextChar = code.peek();
         }
-        if (lastValidToken == null) {
+        
+        if (lastValidToken == null)
             lastValidToken =  TokenFactory.createToken(State.ERROR, code.getLineNumber(),
                     newTokenValueBuilder.toString());
-        }
         return lastValidToken;
     }
     
