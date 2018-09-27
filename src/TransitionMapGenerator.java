@@ -65,6 +65,7 @@ public class TransitionMapGenerator
         fillMapChar(State.ID, State.ID);
         fillMap(State.ID, State.ID, DIGITS);
         transitionMap.put(new CurrentSituation(State.ID, '_'), State.ID);
+   
     }
     
     public static HashMap<CurrentSituation, State> getTransitionMap()
@@ -102,6 +103,24 @@ public class TransitionMapGenerator
         }
         
         for (int i = 97; i < 123; i++){
+            transitionMap.put(new CurrentSituation(oldState, (char) i), newState);
+        }
+    }
+    
+    private static void fillMapSymbols(State oldState, State newState){
+        for (int i =33 ; i < 48; i++){
+            transitionMap.put(new CurrentSituation(oldState, (char) i), newState);
+        }
+        
+        for (int i = 58; i < 65; i++){
+            transitionMap.put(new CurrentSituation(oldState, (char) i), newState);
+        }
+        
+        for (int i = 91; i < 97; i++){
+            transitionMap.put(new CurrentSituation(oldState, (char) i), newState);
+        }
+        
+        for (int i = 123; i < 128; i++){
             transitionMap.put(new CurrentSituation(oldState, (char) i), newState);
         }
     }
