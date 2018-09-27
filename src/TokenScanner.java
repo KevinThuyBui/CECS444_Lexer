@@ -125,7 +125,6 @@ public class TokenScanner {
      * @throws IOException unhandled from processString()
      */
     private Token createStringToken() throws IOException {
-        currentState = State.START;
         String stringTokenValue = processString();
         return TokenFactory.createToken(State.STRING, code.getLineNumber(), stringTokenValue);
     }

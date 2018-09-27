@@ -64,7 +64,7 @@ public class PushBackLineNumberReader extends LineNumberReader
      * returned and position is incremented.
      * Otherwise, the underlying stream's read method is called.
      * @return Next character in buffer or stream.
-     * @throws IOException
+     * @throws IOException Unhandled exception from <code>super.read()</code>
      */
     
     public char readChar() throws IOException
@@ -94,5 +94,14 @@ public class PushBackLineNumberReader extends LineNumberReader
      */
     public void unread(char character){
         buffer[--position] = character;
+    }
+    
+    /**
+     * Default line number starts at 0. It is changed to 1 here.
+     * @return the line number of the input stream
+     */
+    @Override
+    public int getLineNumber() {
+        return super.getLineNumber() + 1;
     }
 }

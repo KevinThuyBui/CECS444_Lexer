@@ -10,7 +10,7 @@ public class FloatToken extends Token {
     @Override
     public String toString()
     {
-        return "(Tok: " + getId() + " line= " + getLineNumber() + " str= \"" + getCodeString() + "\"" +
-                " float= " + value +")";
+        return String.format( "(Tok: %2d line= %2d str= \"%s\" float= %.2f)", getId(),
+                getLineNumber(), getCodeString(), value);
     }
 }

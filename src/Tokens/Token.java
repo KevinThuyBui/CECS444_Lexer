@@ -11,8 +11,7 @@ public class Token {
         this.lineNumber = lineNumber;
     }
     
-    public int getId()
-    {
+    public int getId() {
         return id;
     }
     
@@ -21,15 +20,12 @@ public class Token {
         return lineNumber;
     }
     
-    public String getCodeString()
-    {
+    public String getCodeString() {
     
         return codeString;
     }
     
     @Override
-    public String toString()
-    {
-        return "(Tok: " + id + " line= " + lineNumber + " str= \"" + codeString + "\")";
-    }
+    public String toString() {
+        return String.format( "(Tok: %2d line= %2d str= \"%s\")", getId(), getLineNumber(), getCodeString()); }
 }

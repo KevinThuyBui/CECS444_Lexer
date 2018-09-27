@@ -10,7 +10,7 @@ public class IntToken extends Token {
     @Override
     public String toString()
     {
-        return "(Tok: " + getId() + " line= " + getLineNumber() + " str= \"" + getCodeString() + "\"" +
-                " int= " + value +")";
+        return String.format( "(Tok: %2d line= %2d str= \"%s\" int= %d)", getId(),
+            getLineNumber(), getCodeString(), value);
     }
 }
