@@ -10,6 +10,7 @@ import java.io.Reader;
  * The default buffer is 20 characters long. This should suffice for our Lexer.
  *
  * @author Kevin Bui Kevinthuybui@gmail.com
+ * @author Stefan Brand <stefan.brandepprecht@student.csulb.edu>
  */
 
 public class PushBackLineNumberReader extends LineNumberReader
@@ -43,7 +44,6 @@ public class PushBackLineNumberReader extends LineNumberReader
      *  adds it to the internal buffer.
      * @return The next character in the stream.
      */
-    
     public char peek() throws EndOfFileException {
         int nextChar = ' ';
         try
@@ -60,21 +60,25 @@ public class PushBackLineNumberReader extends LineNumberReader
         }
         return (char)nextChar;
     }
-    
-    /**
-     * Checks if the buffer contains any characters before using underlying stream to read.
-     * If the position is less than the length of buffer, <code>buffer[position]</code> is
-     * returned and position is incremented.
-     * Otherwise, the underlying stream's read method is called.
-     * @return Next character in buffer or stream.
-     * @throws IOException Unhandled exception from <code>super.read()</code>
-     */
 
+    /**
+     * Casts the next character from <code>readChar()</code> to a char instead of an int
+     * @return next character
+     * @throws IOException Unhandled exception from <code>readChar()</code>
+     */
     public char readChar() throws IOException
     {
         return (char)readCharAsInt();
     }
 
+    /**
+     * Checks if the buffer contains any characters before using underlying stream to read.
+     * If the position is less than the length of buffer, <code>buffer[position]</code> is
+     * returned and position is incremented.
+     * Otherwise, the underlying stream's read method is called.
+     * @return Next character as an int in buffer or stream.
+     * @throws IOException Unhandled exception from <code>super.read()</code>
+     */
     private int readCharAsInt() throws IOException
     {
         if (position < buffer.length){
@@ -88,21 +92,30 @@ public class PushBackLineNumberReader extends LineNumberReader
      * position.
      * @param pushBackInput The String to be unread.
      */
-    
     public void unread(String pushBackInput){
         //TODO Length checking for buffer
         int length = pushBackInput.length();
-        char[] character = pushBackInput.toCharArray();
+        int[] charactersAsInts = toIntArray(pushBackInput);
+        System.arraycopy(charactersAsInts, 0, buffer, position - length, length);
+        position = position - length;
+    }
+
+    /**
+     * Convert a string to an array of ints
+     * @param input The string
+     * @return The input as an array of ints
+     */
+    private int[] toIntArray(String input) {
+        char[] character = input.toCharArray();
         int [] charactersAsInts = new int[character.length];
 
         int i = 0;
         for (char c : character) {
             charactersAsInts[i++] = c;
         }
-        System.arraycopy(charactersAsInts, 0, buffer, position - length, length);
-        position = position - length;
+        return charactersAsInts;
     }
-    
+
     /**
      * Decrements position then adds the given character to buffer.
      * @param character The character to be unread.

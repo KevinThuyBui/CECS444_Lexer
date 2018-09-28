@@ -1,6 +1,14 @@
 package Tokens;
 
+/**
+ * Subclass of Token which represents a Float.
+ * @author Stefan Brand <stefan.brandepprecht@student.csulb.edu>
+ */
 public class FloatToken extends Token {
+    /**
+     * Holds the actual float value of the Token
+     * Using double to increase precision
+     */
     private double value;
 
     public FloatToken(int id, int lineNumber, String name, double value) {

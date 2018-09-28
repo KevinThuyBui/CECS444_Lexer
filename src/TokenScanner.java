@@ -1,13 +1,14 @@
 import Tokens.Token;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  *  This class handles the parsing of code input and the creation of the token output.
  *
- *  @author Stefan Brand
- *  @author Kevin Bui Kevinthuybui@gmail.com
+ *  @author Stefan Brand <stefan.brandepprecht@student.csulb.edu>
+ *  @author Kevin Bui <Kevinthuybui@gmail.com>
  */
 
 public class TokenScanner {
@@ -23,9 +24,9 @@ public class TokenScanner {
     private State currentState = State.START;
     
     /**
-     * The <code>HashMap</code> that contains the transition table for the states.
+     * The <code>Map</code> that contains the transition table for the states.
      */
-    private static HashMap<CurrentSituation,State> transitionMap = TransitionMapGenerator.getTransitionMap();
+    private static Map<Transition,State> transitionMap = TransitionMapGenerator.getTransitionMap();
     
     /**
      * The default constructor. Requires a <code>PushBackLineNumberReader</code>
@@ -64,7 +65,7 @@ public class TokenScanner {
     }
     
     /**
-     * The token is built a character at a time by passing the <code>CurrentSituation</code> object
+     * The token is built a character at a time by passing the <code>Transition</code> object
      * to the transitionMap. This serves as the key for the <code>HashMap</code> which returns the next
      * state or null if invalid next state.
      */
@@ -75,7 +76,7 @@ public class TokenScanner {
         while(nextChar != '\n' && nextChar != ' '){ // Continue while the next character is not whitespace
             nextChar = code.readChar();
 
-            currentState = transitionMap.get(new CurrentSituation(currentState, nextChar));
+            currentState = transitionMap.get(new Transition(currentState, nextChar));
             newTokenValueBuilder.append(nextChar);
 
 
@@ -106,6 +107,12 @@ public class TokenScanner {
         return createToken(newTokenValueBuilder, lastValidToken);
     }
 
+    /**
+     * Creates a token object from the last valid input or returns the error token if none is found
+     * @param newTokenValueBuilder StringBuilder which holds the current input
+     * @param lastValidToken The last valid token
+     * @return The newly created token
+     */
     private Token createToken(StringBuilder newTokenValueBuilder, Token lastValidToken) {
         if (lastValidToken == null)
             lastValidToken =  TokenFactory.createToken(State.ERROR, code.getLineNumber(),
@@ -128,7 +135,6 @@ public class TokenScanner {
      * @return Token A comment token
      * @throws IOException from code.readChar()
      */
-    
     private Token handleComment() throws IOException, EndOfFileException{
         while (code.peek() != '\n') {
             code.readChar();
@@ -142,16 +148,11 @@ public class TokenScanner {
      * @return ArrayList of Tokens
      * @throws IOException unhandled exception from getNextToken()
      */
-    
-    public ArrayList<Token> getAllTokens() throws IOException {
+    public List<Token> getAllTokens() throws IOException {
+        ArrayList<Token> allTokens = new ArrayList<>();
+
         try {
             clearWhitespace();
-        }
-        catch (EndOfFileException e) {
-            e.printStackTrace();
-        }
-        ArrayList<Token> allTokens = new ArrayList<>();
-        try {
             while (code.peek() != '~') {
                 Token nextToken = getNextToken();
                 if (nextToken.getId() != 1) allTokens.add(nextToken);  // Discards comment tokens
@@ -160,13 +161,13 @@ public class TokenScanner {
                 }
                 clearWhitespace();
             }
-            creatEofToken(allTokens);
+            appendEofToken(allTokens);
         }
         catch (InvalidInputException e) {
             //Breaks loop on invalid Token
         }
         catch (EndOfFileException e) {
-            creatEofToken(allTokens);
+            appendEofToken(allTokens);
         }
         finally {
             code.close();
@@ -174,14 +175,17 @@ public class TokenScanner {
         return allTokens;
     }
 
-    private void creatEofToken(ArrayList<Token> allTokens) {
+    /**
+     * Creates a token of type 0 EOF and appends it to the list of tokens
+     * @param allTokens The list of tokens
+     */
+    private void appendEofToken(List<Token> allTokens) {
         allTokens.add(new Token(State.EOF.getStateID(), code.getLineNumber(), ""));
     }
 
     /**
      * Advances PushBackLineNumberReader to next non-whitespace character.
      */
-    
     private void clearWhitespace() throws EndOfFileException, IOException{
         while (code.peek() == ' ' ||  code.peek() == '\n' )
             code.readChar();
@@ -192,16 +196,13 @@ public class TokenScanner {
      * @return the code string of the String Token
      * @throws IOException Unhandled from readChar()
      */
-    
     private String processString() throws IOException, EndOfFileException {
         StringBuilder newString = new StringBuilder();
+
         while (code.peek() != '"'){
-            
             newString.append(code.readChar());
-            
         }
         code.readChar(); // Necessary to consume the second quote character.
         return newString.toString();
-        
     }
 }
