@@ -7,14 +7,6 @@ public class CurrentSituation {
         this.nextChar = nextChar;
     }
 
-    public State getCurrentState() {
-        return currentState;
-    }
-
-    public char getNextChar() {
-        return nextChar;
-    }
-
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof CurrentSituation) {

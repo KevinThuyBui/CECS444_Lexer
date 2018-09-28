@@ -17,7 +17,7 @@ public class PushBackLineNumberReader extends LineNumberReader
     /**
      * This is the buffer to hold unread data.
      */
-    private char[] buffer;
+    private int[] buffer;
     
     /**
      * This is the position in the buffer where the next character is to be read.
@@ -35,7 +35,7 @@ public class PushBackLineNumberReader extends LineNumberReader
         super(in);
     
         position = 20;
-        buffer = new char[position];
+        buffer = new int[position];
     }
     
     /**
@@ -44,18 +44,21 @@ public class PushBackLineNumberReader extends LineNumberReader
      * @return The next character in the stream.
      */
     
-    public char peek(){
-        char nextChar = ' ';
+    public char peek() throws EndOfFileException {
+        int nextChar = ' ';
         try
         {
-            nextChar = this.readChar();
+            nextChar = this.readCharAsInt();
+            if (nextChar == -1) {
+                throw new EndOfFileException();
+            }
             unread(nextChar);
             
         } catch (IOException e)
         {
             e.printStackTrace();
         }
-        return nextChar;
+        return (char)nextChar;
     }
     
     /**
@@ -66,13 +69,18 @@ public class PushBackLineNumberReader extends LineNumberReader
      * @return Next character in buffer or stream.
      * @throws IOException Unhandled exception from <code>super.read()</code>
      */
-    
+
     public char readChar() throws IOException
+    {
+        return (char)readCharAsInt();
+    }
+
+    private int readCharAsInt() throws IOException
     {
         if (position < buffer.length){
             return buffer[position++];
         }
-        return (char) super.read();
+        return super.read();
     }
     
     /**
@@ -84,7 +92,14 @@ public class PushBackLineNumberReader extends LineNumberReader
     public void unread(String pushBackInput){
         //TODO Length checking for buffer
         int length = pushBackInput.length();
-        System.arraycopy(pushBackInput.toCharArray(), 0, buffer, position - length, length);
+        char[] character = pushBackInput.toCharArray();
+        int [] charactersAsInts = new int[character.length];
+
+        int i = 0;
+        for (char c : character) {
+            charactersAsInts[i++] = c;
+        }
+        System.arraycopy(charactersAsInts, 0, buffer, position - length, length);
         position = position - length;
     }
     
@@ -92,7 +107,7 @@ public class PushBackLineNumberReader extends LineNumberReader
      * Decrements position then adds the given character to buffer.
      * @param character The character to be unread.
      */
-    public void unread(char character){
+    private void unread(int character){
         buffer[--position] = character;
     }
     

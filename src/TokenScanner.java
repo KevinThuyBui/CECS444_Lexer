@@ -34,22 +34,7 @@ public class TokenScanner {
     TokenScanner(PushBackLineNumberReader code) {
         this.code = code;
     }
-    
-    /**
-     * Consumes one character from the input stream to be parsed.
-     * @return The character to be parsed.
-     */
-    private char advance() {
-        char character = ' ';
-        try {
-            character =  code.readChar();
-        }
-        catch (Exception e) {
-            //TODO Return EOF or something like it
-        }
-        
-        return character;
-    }
+
     
     /**
      * Creates a new token using <code>parseNextToken</code> and pushes unused characters back.
@@ -57,7 +42,7 @@ public class TokenScanner {
      * @throws IOException Passes the exception from <code>parseNextToken</code>
      */
     
-    private Token getNextToken() throws IOException {
+    private Token getNextToken() throws IOException, EndOfFileException {
         StringBuilder newTokenValueBuilder = new StringBuilder();
         Token lastValidToken = parseNextToken(newTokenValueBuilder);
         handleUnusedCharacters(newTokenValueBuilder, lastValidToken);
@@ -83,17 +68,17 @@ public class TokenScanner {
      * to the transitionMap. This serves as the key for the <code>HashMap</code> which returns the next
      * state or null if invalid next state.
      */
-    private Token parseNextToken(StringBuilder newTokenValueBuilder) throws IOException {
+    private Token parseNextToken(StringBuilder newTokenValueBuilder) throws IOException, EndOfFileException {
         char nextChar = code.peek();
         Token lastValidToken = null;
-        
+
         while(nextChar != '\n' && nextChar != ' '){ // Continue while the next character is not whitespace
-            nextChar = advance();
-            
+            nextChar = code.readChar();
+
             currentState = transitionMap.get(new CurrentSituation(currentState, nextChar));
             newTokenValueBuilder.append(nextChar);
-        
-        
+
+
             if (currentState == null){
                 break;    // Ends parsing if invalid state entered
             } else if (currentState == State.COMMENT) {
@@ -103,28 +88,37 @@ public class TokenScanner {
                 lastValidToken =  createStringToken();
                 break;
             }
-        
+
             if (currentState.isAccepting()) {
-            
+
                 lastValidToken = TokenFactory.createToken(currentState, code.getLineNumber(),
                         newTokenValueBuilder.toString());
             }
-        
-            nextChar = code.peek();
+
+            try {
+                nextChar = code.peek();
+            }
+            catch (EndOfFileException e){
+                return createToken(newTokenValueBuilder, lastValidToken);
+            }
         }
-        
+
+        return createToken(newTokenValueBuilder, lastValidToken);
+    }
+
+    private Token createToken(StringBuilder newTokenValueBuilder, Token lastValidToken) {
         if (lastValidToken == null)
             lastValidToken =  TokenFactory.createToken(State.ERROR, code.getLineNumber(),
                     newTokenValueBuilder.toString());
         return lastValidToken;
     }
-    
+
     /**
      * Creates a String token
      * @return String Token
      * @throws IOException unhandled from processString()
      */
-    private Token createStringToken() throws IOException {
+    private Token createStringToken() throws IOException, EndOfFileException{
         String stringTokenValue = processString();
         return TokenFactory.createToken(State.STRING, code.getLineNumber(), stringTokenValue);
     }
@@ -135,7 +129,7 @@ public class TokenScanner {
      * @throws IOException from code.readChar()
      */
     
-    private Token handleComment() throws IOException {
+    private Token handleComment() throws IOException, EndOfFileException{
         while (code.peek() != '\n') {
             code.readChar();
         }
@@ -150,25 +144,47 @@ public class TokenScanner {
      */
     
     public ArrayList<Token> getAllTokens() throws IOException {
-        clearWhitespace();
-        ArrayList<Token> allTokens = new ArrayList<>();
-        while (code.peek() != '~') {
-            Token nextToken = getNextToken();
-            if (nextToken.getId() != 1) allTokens.add(nextToken);  // Discards comment tokens
+        try {
             clearWhitespace();
         }
-        code.close();
-        allTokens.add(new Token(State.EOF.getStateID(), code.getLineNumber(),""));
+        catch (EndOfFileException e) {
+            e.printStackTrace();
+        }
+        ArrayList<Token> allTokens = new ArrayList<>();
+        try {
+            while (code.peek() != '~') {
+                Token nextToken = getNextToken();
+                if (nextToken.getId() != 1) allTokens.add(nextToken);  // Discards comment tokens
+                if (nextToken.getId() == 99) {
+                    throw new InvalidInputException("Invalid token detected");
+                }
+                clearWhitespace();
+            }
+            creatEofToken(allTokens);
+        }
+        catch (InvalidInputException e) {
+            //Breaks loop on invalid Token
+        }
+        catch (EndOfFileException e) {
+            creatEofToken(allTokens);
+        }
+        finally {
+            code.close();
+        }
         return allTokens;
     }
-    
+
+    private void creatEofToken(ArrayList<Token> allTokens) {
+        allTokens.add(new Token(State.EOF.getStateID(), code.getLineNumber(), ""));
+    }
+
     /**
      * Advances PushBackLineNumberReader to next non-whitespace character.
      */
     
-    private void clearWhitespace() {
+    private void clearWhitespace() throws EndOfFileException, IOException{
         while (code.peek() == ' ' ||  code.peek() == '\n' )
-            advance();
+            code.readChar();
     }
     
     /**
@@ -177,7 +193,7 @@ public class TokenScanner {
      * @throws IOException Unhandled from readChar()
      */
     
-    private String processString() throws IOException {
+    private String processString() throws IOException, EndOfFileException {
         StringBuilder newString = new StringBuilder();
         while (code.peek() != '"'){
             

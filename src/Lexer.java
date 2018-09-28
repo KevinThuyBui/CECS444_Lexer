@@ -17,7 +17,7 @@ public class Lexer {
     
     
     public static void main(String[] args) {
-        System.out.println("Please enter your code below Enter '~' to end input:");
+        System.out.println("\nEither pipe your code to this program or enter it manually below, terminated by '~':\n");
         PushBackLineNumberReader codeInput = new PushBackLineNumberReader(new BufferedReader(new InputStreamReader(System.in)));
         TokenScanner tokenscanner = Lexer.getTokenScanner(codeInput);
         try

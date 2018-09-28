@@ -47,7 +47,7 @@ public class TransitionMapGenerator
         transitionMap.put(new CurrentSituation(State.START, '/'), State.SLASH);
     }
     
-    private static void addMulticharaterOperators(){
+    private static void addMulticharacterOperators(){
         transitionMap.put(new CurrentSituation(State.MINUS, '>'), State.OPARROW);
         transitionMap.put(new CurrentSituation(State.EQUAL, '='), State.OPEQ);
         transitionMap.put(new CurrentSituation(State.START, '!'), State.MAYBEOPNE);
@@ -82,7 +82,7 @@ public class TransitionMapGenerator
         addPairedDelimiters();
         addOtherPunctuationTokens();
         addCharacters();
-        addMulticharaterOperators();
+        addMulticharacterOperators();
         addStringComment();
     }
     
