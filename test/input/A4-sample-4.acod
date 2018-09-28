@@ -1,0 +1,10 @@
+prog main{
+    // Find the area of a rectangle
+    print("Enter the width: ");
+    width = input( float );
+    print("Enter the height: ");
+    height = input( float);
+
+    area = width * height;
+    print("The area of the rectangle is: ", area);
+}

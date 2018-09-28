@@ -1,0 +1,16 @@
+// Print a pyramid of asterisks
+prog main{
+    i = 0;
+    j = 0;
+    size = 10;
+
+    // Outer Loop
+    while(i < n){
+        // Inner Loop
+        while(j < i){
+            // Print the Stars
+            print("*");
+        }
+        i = i - 1;
+    }
+}

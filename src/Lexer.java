@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
  *
  *  @author Stefan Brand <stefan.brandepprecht@student.csulb.edu>
  *  @author Kevin Bui <Kevinthuybui@gmail.com>
+ *  @author Gabe Flores <rgabeflores@gmail.com>
  */
 
 public class Lexer {
