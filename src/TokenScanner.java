@@ -9,6 +9,7 @@ import java.util.Map;
  *
  *  @author Stefan Brand <stefan.brandepprecht@student.csulb.edu>
  *  @author Kevin Bui <Kevinthuybui@gmail.com>
+ *  @author Richard Salmeron <richard.salmeron@student.csulb.edu>
  */
 
 public class TokenScanner {
