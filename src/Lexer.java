@@ -40,7 +40,11 @@ public class Lexer {
         try
         {
             for (Token t : tokenscanner.getAllTokens())
-                System.out.println(t);
+                if (t.getId() == 99)
+                    System.out.println(String.format("Invalid Input Error: Malformed Token \"%s\" on line %d.",
+                            t.getCodeString(), t.getLineNumber()));
+                else
+                    System.out.println(t);
         } catch (IOException e)
         {
             e.printStackTrace();
