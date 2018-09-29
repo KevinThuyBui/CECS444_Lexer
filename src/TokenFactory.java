@@ -6,6 +6,7 @@ import Tokens.Token;
  * This class handles the creation of Tokens.
  * @author Kevin Bui <Kevinthuybui@gmail.com>
  * @author Stefan Brand <stefan.brandepprecht@student.csulb.edu>
+ * @author Richard Salmeron <richard.salmeron@student.csulb.edu>
  */
 public class TokenFactory
 {
