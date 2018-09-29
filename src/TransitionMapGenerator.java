@@ -3,6 +3,9 @@ import java.util.Map;
 
 /**
  * This class creates a transition map used by the Finite State Machine
+ * @author Kevin Bui <Kevinthuybui@gmail.com>
+ * @author Stefan Brand <stefan.brandepprecht@student.csulb.edu>
+ * @author Richard Salmeron <richard.salmeron@student.csulb.edu>
  */
 
 public class TransitionMapGenerator
