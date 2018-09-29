@@ -3,7 +3,7 @@ import Tokens.Token;
 /**
  * This Enum lists all the valid states the FSM can enter
  * @author Stefan Brand, 
- * Richard Salmeron <richard.salmeron@student.csulb.edu>
+ * @author Richard Salmeron <richard.salmeron@student.csulb.edu>
  */
 
 public enum State {
