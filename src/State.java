@@ -1,8 +1,7 @@
-import Tokens.Token;
 
 /**
  * This Enum lists all the valid states the FSM can enter
- * @author Stefan Brand, 
+ * @author Stefan Brand <stefan.brandepprecht@student.csulb.edu>
  * @author Richard Salmeron <richard.salmeron@student.csulb.edu>
  */
 
@@ -14,7 +13,7 @@ public enum State {
     COMMA(true, 6), SEMI(true, 7),
     
     //Unaccepting States
-    START(false, 99), MAYBEFLOAT(false, 99), MAYBEOPNE(false, 99),
+    START(false, 99), MAYBEFLOAT(false, 99), MAYBEOPNE(false, 99), ERROR(true, 99),
     
     //Keywords
     KPROG(true,10), KMAIN(true, 11), KFCN(true, 12), KCLASS(true, 13), KFLOAT(true, 15), KINT(true, 16),
@@ -31,9 +30,19 @@ public enum State {
     
     //Multi-Char Operators
     OPARROW(true, 51), OPEQ(true, 52), OPNE(true, 53), OPLE(true, 54),
-    OPGE(true, 55), OPSHL(true, 56), OPSHR(true, 57), ERROR(true, 99), EOF(true, 0);
+    OPGE(true, 55), OPSHL(true, 56), OPSHR(true, 57),
 
+    //EOF
+    EOF(true, 0);
+
+    /**
+     * Is it a accepting state or not
+     */
     private boolean accepting;
+
+    /**
+     * The ID of the state, according to the A4 language specifications
+     */
     private int stateID;
 
     State(boolean accepting, int stateID) {
