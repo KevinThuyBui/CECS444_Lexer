@@ -154,7 +154,7 @@ public class TokenScanner {
 
         try {
             clearWhitespace();
-            while (code.peek() != '~') {
+            while (true) {
                 Token nextToken = getNextToken();
                 if (nextToken.getId() != 1) allTokens.add(nextToken);  // Discards comment tokens
                 if (nextToken.getId() == 99) {
@@ -162,7 +162,6 @@ public class TokenScanner {
                 }
                 clearWhitespace();
             }
-            appendEofToken(allTokens);
         }
         catch (InvalidInputException e) {
             //Breaks loop on invalid Token

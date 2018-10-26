@@ -1,4 +1,7 @@
 
+import java.util.Arrays;
+import java.util.Optional;
+
 /**
  * This Enum lists all the valid states the FSM can enter
  * @author Stefan Brand <stefan.brandepprecht@student.csulb.edu>
@@ -56,5 +59,10 @@ public enum State {
     }
     
     public int getStateID() {return stateID;}
+    
+    // This method is used to look up state from state id
+    public static Optional<State> valueOf(int stateID) {
+        return Arrays.stream(values()).filter(State -> State.stateID == stateID).findFirst();
+    }
 
 }
